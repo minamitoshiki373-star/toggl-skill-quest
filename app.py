@@ -7,9 +7,25 @@ st.set_page_config(page_title="Skill Quest", page_icon="🎮", layout="wide")
 
 st.markdown("""
     <style>
-    .stApp { background-color: #ffffff; color: #1e293b; }
-    .stMetric { background-color: #f8fafc; padding: 15px; border-radius: 10px; border: 2px solid #3b82f6; }
-    code { color: #0f172a !important; background-color: #f1f5f9 !important; }
+    /* アプリ全体の背景色と文字色を強制固定 */
+    .stApp { 
+        background-color: #ffffff !important; 
+        color: #1e293b !important; 
+    }
+    /* プレイヤー・ステータス（st.metric）の文字色を強制的に濃いグレーにする */
+    [data-testid="stMetricLabel"], [data-testid="stMetricValue"] {
+        color: #1e293b !important;
+    }
+    .stMetric { 
+        background-color: #f8fafc; 
+        padding: 15px; 
+        border-radius: 10px; 
+        border: 2px solid #3b82f6; 
+    }
+    code { 
+        color: #0f172a !important; 
+        background-color: #f1f5f9 !important; 
+    }
     </style>
     """, unsafe_allow_html=True)
 
