@@ -36,9 +36,9 @@ if study_data and len(study_data) > 0:
         st.markdown("### 📊 現在のスキル熟練度")
         fig = px.bar(
             df, 
-            x="鍛えるスキル（プロジェクト名）", 
+            x="習得スキル（プロジェクト名）",
             y="稼いだ経験値（分）",
-            color="鍛えるスキル（プロジェクト名）",
+            color="習得スキル（プロジェクト名）",
             text="稼いだ経験値（分）",
             color_discrete_sequence=px.colors.qualitative.Safe
         )
