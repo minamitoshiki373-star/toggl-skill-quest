@@ -13,7 +13,7 @@ if study_data is not None:
     
     # ドモのセリフを構築（app.pyのロジックを流用）
     if slack_prob >= 75.0:
-        dialogue = f"【緊急警報】南さんがこのままサボって1日を終える確率は {slack_prob}% だ！タイマーを回して勉強時間を追加し、未来の予測数値を書き換えろ！"
+        dialogue = f"【緊急警報】お前さんがこのままサボって1日を終える確率は {slack_prob}% だ！タイマーを回して勉強時間を追加し、未来の予測数値を書き換えろ！"
     elif slack_prob >= 40.0:
         dialogue = f"【注意：サボり確率 {slack_prob}%】夜間リスクを検知。ダラダラ過ごす前に、サクッと次のクエスト（おすすめ：{most_slack_genre}）を片付けちまおう。"
     else:
