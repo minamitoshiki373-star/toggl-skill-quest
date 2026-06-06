@@ -50,6 +50,7 @@ if study_data and len(study_data) > 0:
 
     with col1:
         st.markdown("### 📊 現在のスキル熟練度")
+        
         fig = px.bar(
             df, 
             x="習得スキル（プロジェクト名）", 
@@ -62,23 +63,17 @@ if study_data and len(study_data) > 0:
         fig.update_traces(
             texttemplate='%{text:.1f} EXP', 
             textposition='outside',
-            textfont=dict(color='#1e293b')
+            textfont_color='#1e293b'
         )
         
         fig.update_layout(
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
-            font=dict(color='#1e293b'),
-            yaxis=dict(
-                rangemode="tozero",
-                tickfont=dict(color='#1e293b'),
-                titlefont=dict(color='#1e293b')
-            ),
-            xaxis=dict(
-                tickfont=dict(color='#1e293b'),
-                titlefont=dict(color='#1e293b')
-            )
+            font_color='#1e293b',
         )
+        
+        fig.update_yaxes(rangemode="tozero", tickfont_color='#1e293b', title_font_color='#1e293b')
+        fig.update_xaxes(tickfont_color='#1e293b', title_font_color='#1e293b')
         
         st.plotly_chart(fig, use_container_width=True)
 
