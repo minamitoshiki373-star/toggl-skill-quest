@@ -91,7 +91,7 @@ if study_data and len(study_data) > 0:
         if slack_prob >= 75.0:
             avatar = "   +--------------+\n   |   ( 🔥 益 🔥 ) |\n   +--------------+"
             status_color = "error"
-            dialogue = f"【緊急警報】南さんがこのままサボって1日を終える確率は {slack_prob}% だ！タイマーを回して勉強時間を追加し、未来の予測数値を書き換えろ！"
+            dialogue = f"【緊急警報】お前さんがこのままサボって1日を終える確率は {slack_prob}% だ！タイマーを回して勉強時間を追加し、未来の予測数値を書き換えろ！"
         elif slack_prob >= 40.0:
             avatar = "   +--------------+\n   |   ( 📝 _ 📝 ) |\n   +--------------+"
             status_color = "warning"
