@@ -58,12 +58,25 @@ if study_data and len(study_data) > 0:
             text="稼いだ経験値（分）",
             color_discrete_sequence=px.colors.qualitative.Safe
         )
-        fig.update_traces(texttemplate='%{text:.1f} EXP', textposition='outside')
         fig.update_layout(
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
             font=dict(color='#1e293b'),
-            yaxis=dict(rangemode="tozero")
+            yaxis=dict(
+                rangemode="tozero",
+                tickfont=dict(color='#1e293b'),
+                titlefont=dict(color='#1e293b')
+            ),
+            xaxis=dict(
+                tickfont=dict(color='#1e293b'), #
+                titlefont=dict(color='#1e293b')
+            )
+        )
+
+        fig.update_traces(
+            texttemplate='%{text:.1f} EXP', 
+            textposition='outside',
+            textfont=dict(color='#1e293b') #
         )
         st.plotly_chart(fig, use_container_width=True)
 
