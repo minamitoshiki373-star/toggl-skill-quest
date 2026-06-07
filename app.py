@@ -34,98 +34,112 @@ st.subheader("〜 経験値（Togglログ）を稼いで、モンスターを育
 st.markdown("---")
 
 with st.spinner("📜 ギルドの通信魔術（Toggl API）で進捗を同期中..."):
+    # analyzer.pyから本日分（朝4時〜）の集計データを取得
     study_data = get_weekly_study_time()
 
-if study_data and len(study_data) > 0:
+# データの存在チェック
+if study_data is not None:
     z_scores, _ = calculate_z_scores(study_data)
     slack_prob = predict_slacking_probability(study_data)
     total_exp = sum(study_data.values())
     
-    df = pd.DataFrame({
-        "習得スキル（プロジェクト名）": list(study_data.keys()),
-        "稼いだ経験値（分）": list(study_data.values())
-    })
+    # データが空、または全プロジェクトの合計時間が0の場合のエラー回避用ハンドリング
+    if total_exp == 0 or len(study_data) == 0:
+        df = pd.DataFrame(columns=["習得スキル（プロジェクト名）", "稼いだ経験値（分）"])
+    else:
+        df = pd.DataFrame({
+            "習得スキル（プロジェクト名）": list(study_data.keys()),
+            "稼いだ経験値（分）": list(study_data.values())
+        })
 
     col1, col2, col3 = st.columns([1.2, 1.0, 1.0])
 
     with col1:
         st.markdown("### 📊 現在のスキル熟練度")
         
-        fig = px.bar(
-            df, 
-            x="習得スキル（プロジェクト名）", 
-            y="稼いだ経験値（分）",
-            color="習得スキル（プロジェクト名）",
-            text="稼いだ経験値（分）",
-            color_discrete_sequence=px.colors.qualitative.Safe
-        )
-        
-        fig.update_traces(
-            texttemplate='%{text:.1f} EXP', 
-            textposition='outside',
-            textfont_color='#1e293b'
-        )
-        
-        fig.update_layout(
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
-            font_color='#1e293b',
-        )
-        
-        fig.update_yaxes(rangemode="tozero", tickfont_color='#1e293b', title_font_color='#1e293b')
-        fig.update_xaxes(tickfont_color='#1e293b', title_font_color='#1e293b')
-        
-        st.plotly_chart(fig, use_container_width=True)
+        # 朝4時以降、まだ全くタイマーが動いていないとき
+        if total_exp == 0:
+            st.info("朝4時以降の勉強データはまだ記録されていません。Togglでタイマーをスタートしましょう！")
+        else:
+            fig = px.bar(
+                df, 
+                x="習得スキル（プロジェクト名）", 
+                y="稼いだ経験値（分）",
+                color="習得スキル（プロジェクト名）",
+                text="稼いだ経験値（分）",
+                color_discrete_sequence=px.colors.qualitative.Safe
+            )
+            
+            fig.update_traces(
+                texttemplate='%{text:.1f} EXP', 
+                textposition='outside',
+                textfont_color='#1e293b'
+            )
+            
+            fig.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font_color='#1e293b',
+            )
+            
+            fig.update_yaxes(rangemode="tozero", tickfont_color='#1e293b', title_font_color='#1e293b')
+            fig.update_xaxes(tickfont_color='#1e293b', title_font_color='#1e293b')
+            
+            st.plotly_chart(fig, use_container_width=True)
 
     with col2:
         st.markdown("### 🧬 育成中のモンスター")
         
-        # 【修正】確実に表示される公式画像パス（GIFアニメーション）へ変更
-        # ポケモン進化ライン：ミニリュウ(147) ➔ ハクリュー(148) ➔ カイリュー(149)
+        # 1日完結型（朝4時〜）の進化ライン基準
         if total_exp == 0:
-            # 経験値ゼロ：タマゴ（404エラー対策としてGitHubの安定したアセットを使用）
+            # 経験値ゼロ：モンスターボール
             img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
             stage_title = "🧭 ステージ 0: モンスターボール"
-            caption_text = "まだ経験値が記録されていません。タイマーを回してポケモンを登場させよう！"
-        elif total_exp < 180.0:
-            # 3時間未満：ミニリュウ
+            caption_text = "朝4時を過ぎました！まだ今日の経験値が記録されていません。タイマーを回してポケモンを登場させよう！"
+        elif total_exp < 30.0:
+            # 30分未満：ミニリュウ
             img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/147.gif"
             stage_title = "🐉 ステージ 1: ミニリュウ"
-            caption_text = "進化の旅が始まりました。脱皮を繰り返して大きくなります。"
-        elif total_exp < 480.0:
-            # 8時間未満：ハクリュー
+            caption_text = "今日の進化の旅が始まりました。脱皮を繰り返して大きくなります。"
+        elif total_exp < 90.0:
+            # 1.5時間未満：ハクリュー
             img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/148.gif"
             stage_title = "✨ ステージ 2: ハクリュー"
             caption_text = "オーラをまとって進化！最終進化（カイリュー）まであと一息です。"
         else:
-            # 8時間以上：カイリュー
+            # 1.5時間以上：カイリュー（最終進化）
             img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/149.gif"
             stage_title = "🧡 ステージ 3: カイリュー（最終進化）"
-            caption_text = "最終進化達成！素晴らしいコミット量です。この調子を維持しましょう！"
+            caption_text = "本日の最終進化達成！素晴らしいコミット量です。この調子を維持しましょう！"
             
-        # 画像を表示
         st.image(img_url, width=120)
         st.caption(f"**{stage_title}**\n\n{caption_text}")
 
     with col3:
         st.markdown("### 👾 伴走モンスター：ドモ")
-        # 次に進めるべきおすすめ（一番時間が少ないもの）を特定するロジックのみ残す
-        most_slack_genre = min(z_scores, key=z_scores.get)
         
-        st.write(f"🔮 **本日のサボり予測確率**: `{slack_prob}%`")
+        if z_scores:
+            most_slack_genre = min(z_scores, key=z_scores.get)
+        else:
+            most_slack_genre = "未設定のクエスト"
         
-        if slack_prob >= 75.0:
+        # 1日の始まり（EXP=0）はサボり確率を強制的に100%にする
+        display_slack_prob = 100.0 if total_exp == 0 else slack_prob
+        
+        st.write(f"🔮 **本日のサボり予測確率**: `{display_slack_prob}%`")
+        
+        if display_slack_prob >= 75.0:
             avatar = "   +--------------+\n   |   ( 🔥 益 🔥 ) |\n   +--------------+"
             status_color = "error"
-            dialogue = f"【緊急警報】お前さんがこのままサボって1日を終える確率は {slack_prob}% だ！タイマーを回して勉強時間を追加し、未来の予測数値を書き換えろ！"
-        elif slack_prob >= 40.0:
+            dialogue = f"【緊急警報】お前さんがこのままサボって1日を終える確率は {display_slack_prob}% だ！タイマーを回して勉強時間を追加し、未来の予測数値を書き換えろ！"
+        elif display_slack_prob >= 40.0:
             avatar = "   +--------------+\n   |   ( 📝 _ 📝 ) |\n   +--------------+"
             status_color = "warning"
-            dialogue = f"【注意：サボり確率 {slack_prob}%】夜間リスクを検知。ダラダラ過ごす前に、サクッと次のクエスト（おすすめ：{most_slack_genre}）を片付けちまおう。"
+            dialogue = f"【注意：サボり確率 {display_slack_prob}%】夜間リスクを検知。ダラダラ過ごす前に、サクッと次のクエスト（おすすめ：{most_slack_genre}）を片付けちまおう。"
         else:
             avatar = "   +--------------+\n   |   ( ʘ ‿ ʘ  )b |\n   +--------------+"
             status_color = "success"
-            dialogue = f"【状態：快適】アクションを確認したぜ！サボり確率は {slack_prob}% に低下。この調子で経験値を積み上げていこう！"
+            dialogue = f"【状態：快適】アクションを確認したぜ！サボり確率は {display_slack_prob}% に低下。この調子で経験値を積み上げていこう！"
 
         st.code(avatar, language="text")
         if status_color == "error": st.error(dialogue)
@@ -133,7 +147,7 @@ if study_data and len(study_data) > 0:
         else: st.success(dialogue)
             
         st.markdown("#### ⚔️ プレイヤー・ステータス")
-        st.metric(label="今週の総獲得EXP", value=f"{total_exp:.1f} 点")
+        st.metric(label="本日の総獲得EXP", value=f"{total_exp:.1f} 点")
         st.metric(label="次の推奨クエスト", value=most_slack_genre)
 
 else:
