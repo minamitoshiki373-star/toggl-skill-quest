@@ -100,8 +100,35 @@ def predict_slacking_probability(study_summary):
     今日サボる確率を計算するロジック。
     1日の合計学習時間（EXP）が増えるほど、サボり確率がリアルタイムに減少します。
     """
-    if not study_summary:
-        return 100.0  # データが取れない時はサボり100%
+    # 💡 安全対策：データが取れない、または空の場合はサボり確率100%を確実に返す
+    if not study_summary or len(study_summary) == 0:
+        return 100.0
     
+    total_time = sum(study_summary.values())
+    if total_time == 0:
+        return 100.0
+
     tokyo_tz = zoneinfo.ZoneInfo("Asia/Tokyo")
     now_tokyo = datetime.now(tokyo_tz)
+    current_hour = now_tokyo.hour
+    
+    # ベースのサボり確率（夜になるほど高くなる）
+    base_probability = 30.0
+    if current_hour >= 22:
+        base_probability += 50.0
+    elif current_hour >= 20:
+        base_probability += 35.0
+    elif current_hour >= 18:
+        base_probability += 15.0
+    
+    # 勉強時間が追加されたら、時間帯リスクをマイナス補正
+    base_probability -= (total_time * 2.0)  # 1分ごとに2%減少
+
+    final_probability = max(0.0, min(100.0, base_probability))
+    
+    # 今まさに机に向かって合計時間が少しでも動いているなら、強制的に数値を下げる
+    if final_probability > 40.0:
+        final_probability = 25.0
+        
+    # 💡 最後に必ず round() で囲った数値を返すように徹底（Noneが返るのを防ぐ）
+    return round(float(final_probability), 1)
