@@ -96,12 +96,12 @@ if study_data is not None:
             img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
             stage_title = "🧭 ステージ 0: モンスターボール"
             caption_text = "朝4時を過ぎました！まだ今日の経験値が記録されていません。タイマーを回してポケモンを登場させよう！"
-        elif total_exp < 30.0:
+        elif total_exp < 60.0:
             # 30分未満：ミニリュウ
             img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/147.gif"
             stage_title = "🐉 ステージ 1: ミニリュウ"
             caption_text = "今日の進化の旅が始まりました。脱皮を繰り返して大きくなります。"
-        elif total_exp < 90.0:
+        elif total_exp < 180.0:
             # 1.5時間未満：ハクリュー
             img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/148.gif"
             stage_title = "✨ ステージ 2: ハクリュー"
