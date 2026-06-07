@@ -87,18 +87,18 @@ if study_data and len(study_data) > 0:
             img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
             stage_title = "🧭 ステージ 0: モンスターボール"
             caption_text = "まだ経験値が記録されていません。タイマーを回してポケモンを登場させよう！"
-        elif total_exp < 60.0:
-            # 1時間未満：ミニリュウ
+        elif total_exp < 180.0:
+            # 3時間未満：ミニリュウ
             img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/147.gif"
             stage_title = "🐉 ステージ 1: ミニリュウ"
             caption_text = "進化の旅が始まりました。脱皮を繰り返して大きくなります。"
-        elif total_exp < 180.0:
-            # 3時間未満：ハクリュー
+        elif total_exp < 480.0:
+            # 8時間未満：ハクリュー
             img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/148.gif"
             stage_title = "✨ ステージ 2: ハクリュー"
             caption_text = "オーラをまとって進化！最終進化（カイリュー）まであと一息です。"
         else:
-            # 3時間以上：カイリュー
+            # 8時間以上：カイリュー
             img_url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/149.gif"
             stage_title = "🧡 ステージ 3: カイリュー（最終進化）"
             caption_text = "最終進化達成！素晴らしいコミット量です。この調子を維持しましょう！"
